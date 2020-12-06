@@ -6,6 +6,7 @@ import { UserDto } from "./dto/user.dto";
 import { User } from "./entities/user.entity";
 import { Net } from "./entities/net.entity";
 import { NetDto } from "./dto/net.dto";
+import { NetsDto } from "./dto/nets.dto";
 
 @Injectable()
 export class UserService {
@@ -26,6 +27,29 @@ export class UserService {
     this.usersRepository.update(id, user);
   }
 
+  async get_all_nets(user_id: number): Promise<Array<NetsDto>> {
+    const user = await this.usersRepository.findOne(user_id);
+    const res_nets = await this.netsRepository.find({ user });
+
+    if (user) {
+      return res_nets
+        ? res_nets.map((net) => ({
+            name: net.name,
+            last_update: net.last_update
+          }))
+        : null;
+    }
+  }
+
+  async get_net(user_id: number, name: string): Promise<Net> {
+    const res_net = await this.netsRepository.findOne({ name });
+    const user = await this.usersRepository.findOne(user_id);
+
+    if (user) {
+      return res_net ? res_net : null;
+    }
+  }
+
   async update_net(user_id: number, name: string, net: NetDto): Promise<void> {
     const res_net = await this.netsRepository.findOne({ name });
     const user = await this.usersRepository.findOne(user_id);
@@ -35,9 +59,16 @@ export class UserService {
         await this.netsRepository.update({ name }, net);
       } else {
         net.user = user;
+        net.name = name;
         await this.netsRepository.save(net);
       }
     }
+  }
+
+  async get_config(id: number): Promise<JSON> {
+    const user = await this.usersRepository.findOne(id);
+
+    return user.configs ? user.configs : null;
   }
 
   async update_config(id: number, config: JSON): Promise<void> {

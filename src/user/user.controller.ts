@@ -32,6 +32,16 @@ export class UserController {
     this.userService.update_user(id, userDto);
   }
 
+  @Get(":id/nets")
+  get_all_nets(@Param("id", ParseIntPipe) id: number) {
+    return this.userService.get_all_nets(id);
+  }
+
+  @Get(":id/net/:name")
+  get_net(@Param("id", ParseIntPipe) id: number, @Param("name") name: string) {
+    return this.userService.get_net(id, name);
+  }
+
   @Put(":id/net/:name")
   update_net(
     @Param("id", ParseIntPipe) id: number,
@@ -39,6 +49,11 @@ export class UserController {
     @Body() net: NetDto
   ) {
     this.userService.update_net(id, name, net);
+  }
+
+  @Get(":id/config")
+  get_config(@Param("id", ParseIntPipe) id: number) {
+    return this.userService.get_config(id);
   }
 
   @Put(":id/config")

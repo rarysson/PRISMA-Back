@@ -10,7 +10,7 @@ export class Net {
   name: string;
 
   @Column()
-  last_update: number;
+  last_update: string;
 
   @Column("json")
   net: JSON;
